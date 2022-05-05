@@ -1,0 +1,260 @@
+<style>
+    .bill {
+        margin: 0 auto;
+        width: 940px;
+        height: 920px;
+        border: 1px solid red;
+    }
+
+    .layui-form-label {
+        width: 100px;
+    }
+
+    .layui-input {
+        width: 260px;
+    }
+</style>
+<!--本页面没有引入layui.js 及 css等资源，只能作为子页面在其它主页面打开-->
+<div id="bill" class="bill">
+    <div style="padding: 20px 0 20px 0;font-size: 24px;text-align: center;">销售订单</div>
+    <form class="layui-form" action="" lay-filter="billgo" style="width: 100%;">
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">单据编号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="billno" required lay-verify="required" placeholder="请输入编号"
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">单据日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="billdate" id="bdate" required lay-verify="required" autocomplete="off"
+                        class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">客户名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="customer" required lay-verify="required" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">送货地址</label>
+                <div class="layui-input-inline">
+                    <select name="customeraddress" required lay-verify="required">
+                        <option value=""></option>
+                        <option value="0">北京</option>
+                        <option value="1">上海</option>
+                        <option value="2">广州</option>
+                        <option value="3">深圳</option>
+                        <option value="4" selected>杭州</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">单况</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="billstatus" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">币别</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="currid" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">订单类型</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="billstylename" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">单价是否含税</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="priceofoftax" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab" lay-filter="docDemoTabBrief" style="width: 80%;margin: 0 auto;">
+            <ul class="layui-tab-title">
+                <li class="layui-this">内容</li>
+                <li>备注</li>
+
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <table id="salebill" lay-filter="salebill"></table>
+                </div>
+                <div class="layui-tab-item">
+                    <textarea name="remark" class="layui-textarea" style="height: 200px;">
+                            aaaa
+                        </textarea>
+                </div>
+
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">业务人员</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="salesid" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">所属部门</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="departid" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+            <div class="layui-inline" style="width: 50%;">
+                <label class="layui-form-label">制单人员</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="maker" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">复核人员</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="permitter" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <!-- 
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button class="layui-btn">查询加载</button>
+            </div>
+        </div>
+     -->
+    </form>
+    <div class="layui-btn-group" style="margin: 0 auto;">
+        <button id="billload" title="加载新数据" type="button" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe654;</i>
+        </button>
+        <button type="button" title="保存单据" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe655;</i>
+        </button>
+        <button type="button" title="编辑数据" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe642;</i>
+        </button>
+        <button type="button" title="单据删除" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe640;</i>
+        </button>
+        <button type="button" title="上一页" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe65a;</i>
+        </button>
+        <button type="button" title="下一页" class="layui-btn layui-btn-sm">
+            <i class="layui-icon">&#xe65b;</i>
+        </button>
+    </div>
+    <script>
+
+        layui.use(['layer', 'form', 'table', 'laydate'], function () {
+            let layer = layui.layer;
+            let form = layui.form;
+            let table = layui.table;
+            let laydate = layui.laydate;
+            let $ = layui.jquery
+            laydate.render({
+                elem: '#bdate' //日期框id
+                , value: new Date()
+            });
+            let tabl = table.render({
+                elem: '#salebill'
+                , id: 'billdata'
+                , height: 312
+                , width: 780
+                //, url: '/data'
+                , page: false
+                , skin: 'line'
+                , even: 'true'
+                , size: 'lg'
+                , limit: 200
+                , cols: [[
+                    { field: 'linenum', title: '栏号', width: 80, sort: true, fixed: 'left' }
+                    , { field: 'code', title: '物料编号', width: 150, sort: true }
+                    , { field: 'name', title: '物料名称', sort: true }
+                    , { field: 'specs', title: '规格型号', edit: 'text', width: 80 }
+                    , { field: 'unitof', title: '计量单位' }
+                    , { field: 'quantities', title: '数量', edit: 'text' }
+                    , { field: 'unitprice', title: '单价', edit: 'text' }
+                    , { field: 'amounts', title: '总金额', edit: 'text' }
+                ]]
+                , data: [{ "linenum": 1, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 2, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 3, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 4, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 5, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 6, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 7, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 8, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 9, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 10, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 11, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                    , { "linenum": 12, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                ]
+            });
+            //表格事件函数table.on('edit(lay-filter)',callback),
+            //'edit'是事件名，'lay-filter'为table属性名
+            table.on('edit(salebill)', function (obj) {
+                alert(obj.value);
+                console.log(obj.value);
+                console.log(obj.field);
+                console.log(obj.data);
+            });
+            form.on('submit(billgo)', function (data) {
+                let list = table.getData("billdata");
+                let nlist = list.map((value, index) => {
+                    value.linenum = value.linenum + 10;
+                    return value;
+                })
+                let n2list = table.cache["billdata"]
+                table.cache["billdata"] = nlist;
+                table.reload('billdata', { data: nlist });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+            var change = function () {
+                alert("重新加载数据");
+                return false;
+            }
+            $("#billload").on('click', function () {
+                let ths = this;
+                let p = new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: 'bill.json',
+                        dataType: 'json',
+                        success: function (data) {
+                            let dt = data;
+                            resolve(data);
+                        },
+                        error: function () {
+
+                        }
+                    });
+
+                });
+                p.then(function (res) {
+                    alert(typeof (res) + JSON.stringify(res));
+                    form.val('billgo', res);
+                    table.cache["billdata"] = res.details;
+                    table.reload('billdata', { data: res.details });
+                });
+                return false;
+            });
+        });
+    </script>
+</div>

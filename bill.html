@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!--资源引用，第三方的，远程引用，网络断开时不能用-->
+    <!-- 
+    <link rel="stylesheet" href="//unpkg.com/layui@2.6.8/dist/css/layui.css">
+    <script src="//unpkg.com/layui@2.6.8/dist/layui.js"></script> -->
+
+    <link rel="stylesheet" href="./layui-master/dist/css/layui.css">
+    <script src="./layui-master/dist/layui.js"></script>
+
+    <style>
+        .bill {
+            margin: 0 auto;
+            width: 940px;
+            height: 920px;
+            border: 1px solid red;
+        }
+
+        .layui-form-label {
+            width: 100px;
+        }
+
+        /*定义表单元素下的input 非表单元素不受影响*/
+        .layui-form-item .layui-input {
+            width: 260px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bill" class="bill">
+        <div style="padding: 20px 0 20px 0;font-size: 24px;text-align: center;">销售订单</div>
+        <form class="layui-form" action="" lay-filter="billgo" style="width: 100%;">
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">单据编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billno" required lay-verify="required" placeholder="请输入编号"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">单据日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billdate" id="bdate" required lay-verify="required" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">客户名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="customer" id="customer" required lay-verify="required"
+                            placeholder="只能f4选择" autocomplete="off" class="layui-input">
+                        <input type="hidden" name="custid" id="custid"><!-- 隐藏表单 -->
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">送货地址</label>
+                    <div class="layui-input-inline">
+                        <select name="customeraddress" required lay-verify="required">
+                            <option value=""></option>
+                            <option value="北京" selected>北京</option>
+                            <option value="上海">上海</option>
+                            <option value="广州">广州</option>
+                            <option value="深圳">深圳</option>
+                            <option value="杭州">杭州</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">单况</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billstatus" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">币别</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="currid" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">订单类型</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billstylename" placeholder="请输入" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">单价是否含税</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="priceofoftax" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab" lay-filter="docDemoTabBrief" style="width: 80%;margin: 0 auto;">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">内容</li>
+                    <li>备注</li>
+
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <table id="salebill" lay-filter="salebill">
+                            <script type="text/html" id="toolbarDemo">
+                                <div class="layui-btn-container">
+                                  <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                                  <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                                  <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                                </div>
+                              </script>
+
+                            <script type="text/html" id="barDemo">
+                                <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                              </script>
+                        </table>
+                    </div>
+                    <div class="layui-tab-item">
+                        <textarea name="remark" class="layui-textarea" style="height: 200px;">
+                            aaaa
+                        </textarea>
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">业务人员</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="salesid" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属部门</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="departid" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">制单人员</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="maker" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">复核人员</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="permitter" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button id="seachtest" class="layui-btn">查询加载</button>
+                </div>
+            </div> -->
+        </form>
+        <div class="layui-btn-group">
+            <button id="billload" title="加载新数据" type="button" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe654;</i>
+            </button>
+            <button id="billsave" type="button" title="保存单据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe655;</i>
+            </button>
+            <button id="cleanup" type="button" title="清空数据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe63f;</i>
+            </button>
+            <button type="button" title="编辑数据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe642;</i>
+            </button>
+            <button id="billdel" type="button" title="单据删除" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe640;</i>
+            </button>
+            <button id="prebill" type="button" title="上一页" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe65a;</i>
+            </button>
+            <button id="nextbill" type="button" title="下一页" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe65b;</i>
+            </button>
+        </div>
+    </div>
+</body>
+<script>
+
+    layui.use(['layer', 'form', 'table', 'laydate'], function () {
+        //一，页面准备工作，和常用变量、常量的声明
+        let layer = layui.layer//用来打开弹窗，选择基本数据
+        let form = layui.form  //用来操作表单，获取表单数据
+        let table = layui.table//用来操作数据表格
+        let laydate = layui.laydate//用来操作日期文本框
+        let $ = layui.jquery    //用来操作jquery对象，获取dom元素
+
+        let baselayer = {       //一个layui的弹出层配置参数定义，弹层方法调用时作为入参
+            type: 2     //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）此场景下用2的方式最适合
+            , title: '选择物料'
+            , area: ['610px', '540px']
+            , anim: 1
+            , shade: 0
+            , maxmin: true
+            , offset: 'auto'//自动垂直、水平居中[160, 300]
+            , content: this.res ? this.res : '<div>hello</div>' //传过来的参数，ajax调用后传过来的参数，这里其实是一个单据的页面元素
+            , btn: ['确定', '全部关闭'] //两个按钮，第一个按钮用来取被选中数据，更新详表数据
+            , yes: function (index, layero) {
+                //do something,比如取值返回到主界面，并关闭窗口
+                //先获取被选中数据
+                let selctd = table.cache['materialdata']
+                let tmp = $('material')
+                layer.close(index)
+            }
+            , btn2: function () {
+                layer.closeAll()
+            }
+            , zIndex: layer.zIndex //重点1 默认值：19891014
+            , success: function (layero, index) {//渲染成功后回调方法，也可以在此初始化数据
+                layer.setTop(layero) //重点2. 保持选中窗口置顶
+                //记录索引，以便按 esc 键关闭。事件见代码最末尾处。
+                layer.escIndex = layer.escIndex || []
+                layer.escIndex.unshift(index)//向数组的开头添加一个或更多元素
+                //选中当前层时，将当前层索引放置在首位
+                layero.on('mousedown', function () {
+                    var _index = layer.escIndex.indexOf(index)
+                    if (_index !== -1) {
+                        layer.escIndex.splice(_index, 1) //删除原有索引
+                    }
+                    layer.escIndex.unshift(index) //将索引插入到数组首位
+                })
+            }
+            , end: function () {
+                //更新索引
+                if (typeof layer.escIndex === 'object') {
+                    layer.escIndex.splice(0, 1)
+                }
+
+            }
+        }
+        let tabl = table.render({  //定义页面中用到的数据表格
+            elem: '#salebill'      //渲染到指定div位置，此为单据的详单位置
+            , id: 'billdata'       //数据表格独立的id标识,配置参数请查阅官方文档
+            //注意，此处id必须确保全局唯一，甚至整个项目中的唯一，可以用‘团队编号+个人全拼+data’构成
+            , height: 380
+            , width: 780
+            //, url: '/data'       //注释了，原本渲染同时ajax加载数据，改为由data属性加载数据（在后面）
+            , page: false          //不需要分页
+            , skin: 'line'
+            , even: 'true'
+            , size: 'lg'
+            , limit: 200   //设置200是足够大，否则设置更大一些。limit参数有些奇怪，不设置默认10条，page：false时，超过了10条就显示不出来，除非设置为true，但有时候不需要分页啊
+            //, toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , toolbar: 'default'        //与上面一行可以互为切换测试效果，引用layui数据表格默认的工具条
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示:请问想要点什么'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , totalRow: true //底部合计行
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'linenum', title: '栏号', width: 80, sort: true, fixed: 'left', totalRowText: '合计' }
+                //单元格添加自定义指定事件，event: 'gridDbDown'，本案例暂时取消使用
+                , { field: 'code', title: '物料编号', edit: 'text', event: 'gridDbDown', width: 150, sort: true }
+                , { field: 'name', title: '物料名称', sort: true }
+                , { field: 'specs', title: '规格型号', edit: 'text', sort: true }
+                , { field: 'unitof', title: '计量单位' }
+                , { field: 'quantities', title: '数量', edit: 'text', totalRow: true }
+                , { field: 'unitprice', title: '单价', edit: 'text' }
+                , { field: 'amounts', title: '总金额', edit: 'text', totalRow: true }
+            ]]//预先提供的死数据，可以data: []这样的空数据写法
+            , data: [{ "linenum": 1, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 2, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 3, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 4, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 5, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 6, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 7, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 8, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 9, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 10, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 11, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+                , { "linenum": 12, "code": "a01", "name": "aaa", "specs": "pcs", "unitof": "g", "quantities": 10, "unitprice": 10, "amounts": 100 }
+            ]
+        })
+        //二，页面渲染后，公共方法和数据加载=================================
+        laydate.render({        //日期控件渲染
+            elem: '#bdate' //日期框id
+            , value: new Date()
+        })
+        //数据的动态加载方法
+        const zlLoad = function () {
+            let p = new Promise(function (resolve, reject) {
+                $.ajax({
+                    //url: 'bill.json',//没有后台时，url的选择
+                    url: 'https://localhost:5001/api/Orderbill/GetEnd',
+                    dataType: 'json',
+                    success: function (data) {
+                        let dt = data
+                        resolve(data)
+                    },
+                    error: function () {
+                        //出错时的处理
+                    }
+                })
+
+            })
+            p.then(function (res) {
+                alert(typeof (res) + JSON.stringify(res))
+                res.customer = res.cust.custname  //后天返回的是客户对象cust,界面上显示的是名字
+                res.custid = res.cust.customer  //客户的编号存放到隐藏表单中
+                form.val('billgo', res)//form 加载                
+                table.reload('billdata', { data: res.details })
+            })
+            return false
+        }
+        //一般在页面加载后（当前的页面layer），自动加载数据
+        layer.ready(function () {
+            zlLoad()
+        })
+        //收集页面数据，通常在提交前被调用
+        function collectData() {
+            //获取主单数据，由form提取
+            let master = form.val('billgo')
+            //table.getData(id) //用于获取表格当前页的所有行数据（layui 2.6.0 开始新增）
+            let details = table.getData('billdata')
+            //更新明细中的单据编号，使与主单的编号一致(有时候这不是必须的，因为后台的ORM框架执行保存时，会自动将明细中的外键billno与主单一致，同步保存)
+            let newdetails = details.map((item, index, array) => {
+                return item.billno = master.billno
+            })
+            master.cust = { "customer": master.custid }//因为页面显示的是客户的名字，更换成客户id进行
+            master.details = details//组建完整单据数据并返回数据
+            return master
+        }
+        //三，各种事件函数=============================
+        //表格事件函数table.on('edit(lay-filter)',callback),
+        //'edit'是事件名，'lay-filter'为table属性名，意为：指定数据表格当单元格点击时支持数据编辑
+        //table.on('row(lay-filter)', function(obj){......}
+        //table.on('rowDouble(lay-filter)', function(obj){......}
+        //目前官方文档知道的数据表格，这三个事件都是定义在整个表格上，而不是表格的局部单元格，非常需要的
+        //是单元格独立的事件（点击、双击、获焦、失焦、键盘等）。
+        table.on('edit(salebill)', function (obj) {
+            alert(obj.value)
+            // console.log(obj.value)
+            // console.log(obj.field)
+            // console.log(obj.data)
+        })
+        //
+        table.on('rowDouble(salebill)', function (obj) {
+            layer.msg("行的双击事件，可以在此开窗选值，返回后填充")
+            let trobj = $(this)
+
+            //1 先ajax方法获得页面的字面字符串（使用了ES6的Promise技术，自行参考学习）
+            //2 再通过layer.open()方法打开窗口
+            baselayer.content = 'openwind.html' //打开层包含的页面
+            //此处打开层,open方法返回打开层的索引号
+            layer.table = table
+            let index = layer.open(baselayer)
+        })
+
+        //监听头工具栏事件'toolbar(table的lay-filter名称)'
+        table.on('toolbar(salebill)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id)
+                , dtline = checkStatus.data //获取选中的数据集合
+            let odata = obj.config.data     //获取表格所有数据集合
+
+            switch (obj.event) {
+                case 'add':
+                    //添加新行，首先判断最后一行是否已经填充数据（不是空行），否则提示选择物料编号或填充数据
+                    let oline = odata[odata.length - 1]
+                    let nline = { "linenum": odata.length + 1, "code": "", "name": "", "specs": "", "unitof": "", "quantities": 0, "unitprice": 0, "amounts": 0 }
+                    //优先判断是否有第一行，没有的话必须先曾一行
+                    if (oline == undefined) {
+                        odata.push(nline)
+                        table.reload('billdata', { data: odata })
+                        break
+                    }
+                    //再判断是否填充了数据
+                    if (typeof oline['code'] == undefined || oline['code'] == null || oline['code'] == "") {
+                        layer.msg('请新增第一行或填充数据')
+                        break
+                    }
+                    odata.push(nline)
+                    table.reload('billdata', { data: odata })
+                    break
+                case 'update'://此段代码单据页面用不到，保留是为了示范
+                    if (dtline.length === 0) {
+                        layer.msg('请选择一行')
+                    } else if (dtline.length > 1) {
+                        layer.msg('只能同时编辑一个')
+                    } else {
+                        layer.alert('编辑 [id]：' + checkStatus.data[0].id)
+                    }
+                    break
+                case 'delete':
+                    if (dtline.length === 0) {
+                        layer.msg('请至少选择一行')
+                    } else {
+                        //执行删除行,由临时变量tmp保存删除后的集合
+                        let tmp = odata.filter(oitem => !dtline.some(dedline => dedline.linenum == oitem.linenum))
+                        //删除指定行数据后，重新编排行号                        
+                        let j = 1
+                        tmp.map(item => { item.linenum = j++ })//每一行数据行号'linenum'从1开始累加
+                        table.reload('billdata', { data: tmp })
+                    }
+                    break
+            }
+        })
+        table.on('toolbar(billdelete)', function (obj) {
+
+        })
+        //实现表单的提交方法，测试提交事件
+        form.on('submit(billgo)', function (data) {
+            //一段测试代码            
+            //提交前收集单据数据
+            let bill = collectData()
+            return false //阻止表单跳转。如果需要表单跳转，去掉这段或返回true即可。
+        })
+
+        //点击按钮时调用数据加载方法
+        $("#billload").on('click', zlLoad)
+
+        //单据的分页方法
+        $("#bill2page").on('click', function () {
+            alert("此处实现分页逻辑")
+        })
+        //单据的页面清空方法
+        $("#cleanup").on('click', function () {
+            alert("此处实现数据清空方法")
+            //似乎用jquery的方法有效
+            $("form")[0].reset() //清空后重新设置固定单据编号和日期，没有使用动态当前时间
+            let bdt = new Date()
+            let year = '' + bdt.getFullYear()
+            let mth = (bdt.getMonth() + 1) >= 10 ? (bdt.getMonth() + 1) : '0' + (bdt.getMonth() + 1)
+            let dd = bdt.getDate() >= 10 ? bdt.getDate() : '0' + bdt.getDate()
+            let bno = year + mth + dd + '001'
+            form.val('billgo', { "billno": bno, "billdate": year + '-' + mth + '-' + dd })
+            table.reload('billdata', { data: [] })
+        })
+
+        $("#nextbill").on('click', function () {
+            //alert("此处实现单据单条记录分页方法")
+            let mst = form.val('billgo')
+            $.ajax({
+                url: "https://localhost:5001/api/Orderbill/Nextbill?billno=" + mst.billno,
+                type: "GET",
+                dataType: 'json',
+                //contentType:"application/json",
+                //data: JSON.stringify(mst),
+                success: function (res) {
+                    let dt = res
+                    res.customer = res.cust.custname  //后天返回的是客户对象cust,界面上显示的是名字
+                    res.custid = res.cust.customer  //客户的编号存放到隐藏表单中
+                    form.val('billgo', res)//form 加载                
+                    table.reload('billdata', { data: res.details })
+                },
+                error: function (res) {
+
+                }
+            })
+        })
+        $("#prebill").on('click', function () {
+            let mst = form.val('billgo')
+            $.ajax({
+                url: "https://localhost:5001/api/Orderbill/Prebill?billno=" + mst.billno,
+                type: "GET",
+                dataType: 'json',
+                //contentType:"application/json",
+                //data: JSON.stringify(mst),
+                success: function (res) {
+                    let dt = res
+                    res.customer = res.cust.custname  //后天返回的是客户对象cust,界面上显示的是名字
+                    res.custid = res.cust.customer  //客户的编号存放到隐藏表单中
+                    form.val('billgo', res)     //form 加载 
+
+                    table.reload('billdata', { data: res.details })
+                },
+                error: function (res) {
+
+                }
+            })
+        })
+        //单据的删除方法
+        $("#billdel").on('click', function () {
+            alert("此处实现单据删除方法")
+            let mst = collectData()
+            $.ajax({
+                url: "https://localhost:5001/api/Orderbill/delOrder",//?billno="+mst.billno, //多数情况下传递一个参数就可以不用传对象               
+                type: "DELETE",
+                contentType: "application/json",
+                data: JSON.stringify(mst),
+                //dataType:"",
+                success: function (res) {
+                    if (res > 0) alert("数据已经删除")
+                },
+                error: function (err) {
+                }
+            })
+        })
+        //单据的保存方法(包含新增和修改，没有改单号就是修改，否则就是新增)
+        $("#billsave").on('click', function () {
+            alert("此处实现单据保存方法")
+            //取得单据数据
+            let billall = collectData()
+
+            alert("要保存的数据是：" + JSON.stringify(billall))
+            //ajax提交方法......自己写
+            let p = new Promise(function (resolve, reject) {
+                $.ajax({
+                    //url: 'bill.json',//没有后台时，url的选择
+                    url: 'https://localhost:5001/api/Orderbill/PostOrder',
+                    data: JSON.stringify(billall),
+                    type: "POST",
+                    contentType: "application/json",//"application/x-www-form-urlencoded"
+                    success: function (data) {
+                        let dt = data
+                        resolve(data)
+                    },
+                    error: function () {
+                    }
+                })
+            })
+            p.then(function (res) {
+                alert(typeof (res) + res)
+            })
+            return false
+        })
+        //用于客户选择的键盘事件，如果用于客户的详情查询，可以使用'f3'114键盘事件
+        $("#customer").on('keydown', function (...args) {
+            if (args[0].keyCode == "115") {//判断是不是"f4"键被按下
+                baselayer.content = 'opencustomer.html'//打开层包含的页面
+                baselayer.anim = 1            
+                let index = layer.open(baselayer)
+            }
+        })
+        //穿透查询客户详情信息 f2键=113
+        $("#customer").on('keydown', function (...args) {
+            if (args[0].keyCode == "113") {
+                layer.msg('此处由你来定义客户的详情显示')
+                const custid = $('#custid').val()
+                if (custid) {
+                    layer.msg('选择的客户编号是' + custid + ',将被作为外键保存到数据库')
+                    //ajax查询，查询到指定客户编号信息后，填充子页面中的表单
+                    $.ajax({
+                        url: 'https://localhost:5001/api/customer/' + custid,
+                        type: "GET",
+                        contentType: "application/json",//"application/x-www-form-urlencoded"
+                        success: function (data) {
+                            baselayer.content = 'customer.html'//ajax取得数据后打开层页面 
+                            baselayer.anim = 0
+                            baselayer.success = function (layero, index) {
+                                let body = layer.getChildFrame('body', index)
+                                let linenum = body.find('#linenum')//子页面中的每一个input字段
+                                let customer = body.find('#customer')
+                                let custname = body.find('#custname')
+                                let custaddress = body.find('#custaddress')
+                                linenum.val(data.linenum)
+                                customer.val(data.customer)
+                                custname.val(data.custname)
+                                custaddress.val(data.custaddress)
+                            }
+                            let index = layer.open(baselayer)
+                        },
+                        error: function () {
+                        }
+                    })
+                } else {
+                    layer.msg('还没有正确选择客户')
+                }
+            }
+        })
+
+
+    })
+</script>
+
+</html>

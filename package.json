@@ -1,0 +1,21 @@
+{
+  "name": "layuitest",
+  "version": "1.0.0",
+  "description": "zling's appui",
+  "main": "bill.html",
+  "scripts": {
+    "start": "live-server --open=./bill.html --host=localhost --port=8080 --proxy=/api:https://localhost:5001",
+    
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zling70/laytestui.git"
+  },
+  "author": "zling",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zling70/laytestui/issues"
+  },
+  "homepage": "https://github.com/zling70/laytestui#readme"
+}

@@ -1,0 +1,117 @@
+{
+    "billno": "20210611001", 
+    "billdate": "2021-06-11", 
+    "customer": "健坤科技", 
+    "customeraddress": "株洲", 
+    "billstatus": "未结案", 
+    "remark": "写入备注:你是一条汉子！", 
+    "currid": "RMB", 
+    "billstylename": "打折销售", 
+    "maker": "admin", 
+    "permitter": "刘经理",
+    "priceofoftax": "是", 
+    "salesid": "小花",
+    "departid": "销售部", 
+    "details": [
+      {
+        "linenum": 1,
+        "code": "FI-SW-01",
+        "name": "Koi",
+        "unitprice": 36.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 368.0,
+        "specs": "EST-1编号"
+      },
+      {
+        "linenum": 2,
+        "code": "K9-DL-01",
+        "name": "Dalmation",
+        "unitprice": 18.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 185.0,
+        "specs": "EST-10"
+      },
+      {
+        "linenum": 3,
+        "code": "RP-SN-01",
+        "name": "Rattlesnake",
+        "unitprice": 38.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 385.0,
+        "specs": "EST-11"
+      },
+      {
+        "linenum": 4,
+        "code": "RP-SN-01",
+        "name": "Rattlesnake",
+        "unitprice": 26.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 265.0,
+        "specs": "EST-12"
+      },
+      {
+        "linenum": 5,
+        "code": "RP-LI-02",
+        "name": "Iguana",
+        "unitprice": 35.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 355.0,
+        "specs": "EST-13"
+      },
+      {
+        "linenum": 6,
+        "code": "FL-DSH-01",
+        "name": "Manx",
+        "unitprice": 158.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 1585.0,
+        "specs": "EST-14"
+      },
+      {
+        "linenum": 7,
+        "code": "FL-DSH-01",
+        "name": "Manx",
+        "unitprice": 83.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 835.0,
+        "specs": "EST-15"
+      },
+      {
+        "linenum": 8,
+        "code": "FL-DLH-02",
+        "name": "Persian",
+        "unitprice": 23.5,
+        "unitof": "P",
+        "quantities": 10.0,
+        "amounts": 235.0,
+        "specs": "EST-16"
+      },
+      {
+        "linenum": 9,
+        "code": "FL-DLH-02",
+        "name": "Persian",
+        "unitprice": 89.5,
+        "unitof": "P",
+        "quantities": 10,
+        "amounts": 895.0,
+        "specs": "EST-17"
+      },
+      {
+        "linenum": 10,
+        "code": "AV-CB-01",
+        "name": "Amazon Parrot",
+        "unitprice": 63.5,
+        "unitof": "P",
+        "quantities": 10,
+        "amounts": 635.0,
+        "specs": "EST-18"
+      }
+    ]
+  }

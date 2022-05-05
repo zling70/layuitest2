@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页</title>
+  <script src="./layui-master/src/layui.js"></script>
+  <link rel="stylesheet" href="./layui-master/src/css/layui.css">
+  </link>
+</head>
+
+<body>
+  <div id="layerDemo" style="margin-bottom: 0;">
+    <div class="layui-btn-container" style="margin-top: 30px;">
+      <button data-method="setTop" class="layui-btn">多窗口模式，层叠置顶</button>
+    </div>
+    <div id='div1'></div>
+  </div>
+  <script>
+    layui.use('layer', function () {
+      var $ = layui.jquery, layer = layui.layer;
+      let burl = 'bill2c.html';//用于弹出层的动态url请求地址，填充弹出层的content
+      var active = {
+        setTop: function () {
+          let args = arguments;
+          var that = this;//这里的this是指 button.layui-btn，即按钮对象
+          //多窗口模式，层叠置顶
+
+          layer.open({
+            type: 1     //0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+            , title: '新开单据'
+            , area: ['940px', '560px']
+            , shade: 0
+            , maxmin: true
+            , offset: [100, 200]
+            , content: args[1] ? args[1] : '<div>hello</div>' //传过来的参数，ajax调用后传过来的参数，这里其实是一个单据的页面元素
+            , btn: ['继续弹出', '全部关闭'] //只是为了演示,业务单据可以不在此处写开窗语句
+            , yes: function (ths, obj) {
+              $(that).click(); //jquery对象选择$(button.layui-btn)该按钮的click()方法
+            }
+            , btn2: function () {
+              layer.closeAll();
+            }
+            , zIndex: layer.zIndex //重点1 默认值：19891014
+            , success: function (layero, index) {
+              layer.setTop(layero); //重点2. 保持选中窗口置顶
+              //记录索引，以便按 esc 键关闭。事件见代码最末尾处。
+              layer.escIndex = layer.escIndex || [];
+              layer.escIndex.unshift(index);//向数组的开头添加一个或更多元素
+              //选中当前层时，将当前层索引放置在首位
+              layero.on('mousedown', function () {
+                var _index = layer.escIndex.indexOf(index);
+                if (_index !== -1) {
+                  layer.escIndex.splice(_index, 1); //删除原有索引
+                }
+                layer.escIndex.unshift(index); //将索引插入到数组首位
+              });
+            }
+            , end: function () {
+              //更新索引
+              if (typeof layer.escIndex === 'object') {
+                layer.escIndex.splice(0, 1);
+              }
+            }
+          });
+        }
+        , confirmTrans: function () {
+          //配置一个透明的询问框
+          layer.msg('大部分参数都是可以公用的<br>合理搭配，展示不一样的风格', {
+            time: 20000, //20s后自动关闭
+            btn: ['明白了', '知道了', '哦']
+          });
+        }
+      };
+      //$('#layerDemo .layui-btn')选择器是id 下的所有按钮，且class=layui-btn
+      $('#layerDemo .layui-btn').on('click', function () {
+        let othis = $(this);//同学，知道jquery的$(this)是什么吗
+        let method = othis.data('method');//jq对象的一个方法，获取数据。
+        //在页面的button定义时，有data-method="setTop"的属性,此处的返回="setTop"
+        let ths = this;//此处的this，指按钮对象button.lay-btn
+        //ajax 请求，加载单据页面，Promise是ES6的新功能，请同学自己找文档学习
+        //Promise对象及then()方法，实现了异步结果返回之后，才保证then（）方法的执行
+        let p = new Promise(function (resolve, reject) {
+          $.ajax({
+            url: burl, 
+            success: function (result) {              
+              resolve(result);
+            }
+          });
+        });
+        p.then(function (result) {
+          let res = result;
+          active[method] ? active[method].call(ths, othis, res) : '';
+          //如果call(this,othis,res)使用this调用，此处的this是window对象，不符合我们的需求
+          //active方法集合中的setTop()方法在ths:按钮对象button.lay-btn而不是window上下文环境被调用
+          //ths:button.layui-btn 按钮上下文对象，不是默认的window
+          //othis:jQuery.fn.init(1) jquery对象，相当于$("#按钮id")返回的jquery对象
+          //res:页面的字符串"<script>.....<div>......</div>"实际是打开的url地址标识的页面
+          //setTop()方法被调用后，里面的layer.open()方法被执行，content: args[1]就是指参数列表中[othis,res]的res参数
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

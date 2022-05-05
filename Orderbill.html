@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单简单操作</title>
+    <style>
+        .Orderbill {
+            margin: 0 auto;
+            width: 940px;
+            height: 520px;
+            border: 1px solid red;
+        }
+
+        .layui-form-label {
+            width: 100px;
+        }
+
+        /*定义表单元素下的input 非表单元素不受影响*/
+        .layui-form-item .layui-input {
+            width: 260px;
+        }
+    </style>
+    <link rel="stylesheet" href="./layui-master/dist/css/layui.css">
+    <script src="./layui-master/dist/layui.js"></script>
+</head>
+<body>
+    <div id="Orderbill" class="Orderbill">
+        <form  class="layui-form" action="" lay-filter="billgo" style="width: 100%;">
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">单据编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billno" required lay-verify="required" placeholder="请输入编号"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">单据日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="billdate" id="bdate" required lay-verify="required" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 860px;">
+                <div class="layui-inline" style="width: 50%;">
+                    <label class="layui-form-label">客户名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="customer" required lay-verify="required" placeholder="请输入"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">送货地址</label>
+                    <div class="layui-input-inline">
+                        <select name="customeraddress" required lay-verify="required">
+                            <option value=""></option>
+                            <option value="北京" selected>北京</option>
+                            <option value="上海">上海</option>
+                            <option value="广州">广州</option>
+                            <option value="深圳">深圳</option>
+                            <option value="长沙">长沙</option>
+                        </select>
+                    </div>
+
+                </div>
+                
+        </form>
+        <div class="layui-btn-group">
+            <button id="billload" title="加载新数据" type="button" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe654;</i>
+            </button>
+            <button id="billsave" type="button" title="保存单据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe655;</i>
+            </button>
+            <button id="cleanup" type="button" title="清空数据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe63f;</i>
+            </button>
+            <button type="button" title="编辑数据" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe642;</i>
+            </button>
+            <button type="button" title="单据删除" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe640;</i>
+            </button>                   
+        </div>
+    </div>
+</body>
+<script>
+
+    layui.use(['layer', 'form', 'table', 'laydate'], function () {
+        let layer = layui.layer;//用来打开弹窗，选择基本数据
+        let form = layui.form;  //用来操作表单，获取表单数据
+        let table = layui.table;//用来操作数据表格
+        let laydate = layui.laydate;//用来操作日期文本框
+        let $ = layui.jquery    //用来操作jquery对象，获取dom元素
+
+        laydate.render({        //日期控件渲染
+            elem: '#bdate' //日期框id
+            , value: new Date()
+        });
+
+        
+        //监听头工具栏事件'toolbar(table的lay-filter名称)'
+        table.on('toolbar(salebill)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id)
+                , dtline = checkStatus.data; //获取选中的数据集合
+            let odata = obj.config.data;     //获取表格所有数据集合
+
+            switch (obj.event) {
+                case 'add':
+                    //添加新行，首先判断最后一行是否已经填充数据（不是空行），否则提示选择物料编号或填充数据
+                    let oline = odata[odata.length - 1];
+                    let nline = { "linenum": odata.length + 1, "code": "", "name": "", "specs": "", "unitof": "", "quantities": 0, "unitprice": 0, "amounts": 0 };
+                    //优先判断是否有第一行，没有的话必须先曾一行
+                    if(oline == undefined){
+                        odata.push(nline);
+                        table.reload('billdata', { data: odata });
+                        break;
+                    }
+                    //再判断是否填充了数据
+                    if (typeof oline['code'] == undefined || oline['code'] == null || oline['code'] == "") {
+                        layer.msg('请新增第一行或填充数据');
+                        break;
+                    }       
+                    odata.push(nline);
+                    table.reload('billdata', { data: odata });
+                    break;
+                case 'update'://此段代码单据页面用不到，保留是为了示范
+                    if (dtline.length === 0) {
+                        layer.msg('请选择一行');
+                    } else if (dtline.length > 1) {
+                        layer.msg('只能同时编辑一个');
+                    } else {
+                        layer.alert('编辑 [id]：' + checkStatus.data[0].id);
+                    }
+                    break;
+                case 'delete':
+                    if (dtline.length === 0) {
+                        layer.msg('请至少选择一行');
+                    } else {//执行删除行，并重新编排行号
+                        alert(dtline.length);
+                        // let tt=[{a:'aa'},{a:'bb'},{a:'cc'},{a:'xs'},{a:'sm'}];
+                        // alert(tt.indexOf({a:'xs'}));
+                        for (let i = 0; i < dtline.length; i++) {
+                            let tm = odata.getObjIndex(dtline[i]);//getObjIndex()是自定义的Array原型函数
+                            if (tm >= 0)
+                                odata.splice(tm, 1);
+                        }
+                        //删除指定行数据后，重新编排行号
+                        for (let i = 0; i < odata.length; i++) {
+                            odata[i].linenum = i + 1;
+                        }
+                        table.reload('billdata', { data: odata });
+                    }
+                    break;
+            };
+        });
+        //实现表单的提交方法，测试提交事件
+        form.on('submit(billgo)', function (data) {
+            //一段测试代码
+            // let list = table.getData("billdata");
+            // let nlist = list.map((value, index) => {
+            //     value.linenum = value.linenum + 10;
+            //     return value;
+            // })
+            // let n2list = table.cache["billdata"]
+            // table.cache["billdata"] = nlist;
+            // table.reload('billdata', { data: nlist });
+            //提交前收集单据数据
+            let bill = collectData();
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段或返回true即可。
+        });
+        //数据的动态加载方法
+        $("#billload").on('click', function () {
+            let p = new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: 'https://localhost:5001/api/Orderbill/GetOrderbills',
+                    dataType: 'json',
+                    crossDomain: true,
+                    success: function (data) {
+                        let dt = data;
+                        resolve(data);
+                    },
+                    error: function () {
+
+                    }
+                });
+
+            });
+            p.then(function (res) {
+                alert(typeof (res) + JSON.stringify(res));
+                form.val('billgo', res[res.length-1]);//form 加载
+            });
+            return false;
+        });
+        
+        //单据的页面清空方法
+        $("#cleanup").on('click', function () {
+            alert("此处实现数据清空方法");
+            //似乎用jquery的方法有效
+            $("form")[0].reset(); //清空后重新设置固定单据编号和日期，没有使用动态当前时间
+            let bdt = new Date();
+            let year = '' + bdt.getFullYear();
+            let mth = (bdt.getMonth() + 1) >= 10 ? (bdt.getMonth() + 1) : '0' + (bdt.getMonth() + 1);
+            let dd = bdt.getDate() >= 10 ? bdt.getDate() : '0' + bdt.getDate();
+            let bno = year + mth + dd + '001';
+            form.val('billgo', { "billno": bno, "billdate": year + '-' + mth + '-' + dd });
+
+            //table.cache["billdata"] = [];
+            table.reload('billdata', { data: [] });
+        });
+        //单据的删除方法
+        $("#billdel").on('click', function () {
+            alert("此处实现单据删除方法");
+        });
+        //单据的保存方法
+        $("#billsave").on('click', function () {
+            alert("此处实现单据保存方法");
+            //取得单据数据
+            let billall = collectData();
+            alert("要保存的数据是：" + JSON.stringify(billall));
+            let p = new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: 'https://localhost:5001/api/Orderbill/PostOrder',
+                    data: JSON.stringify(billall),
+                    type: "POST",
+                    contentType:"application/json",//"application/x-www-form-urlencoded"
+                    success: function (dts) {
+                        let dt = dts;
+                        resolve(dt);
+                    },
+                    error: function (error) {
+                        console.info("出错了");
+                        reject(error);
+                    }
+                });
+
+            });
+            p.then(function (res) {
+                alert(typeof (res) + JSON.stringify(res));
+                form.val('billgo', res[1]);//form 加载
+            });
+        });
+
+        //收集页面数据，通常在提交前被调用
+        function collectData() {
+            //获取主单数据，由form提取
+            let master = form.val('billgo');
+            //table.getData(id); //用于获取表格当前页的所有行数据（layui 2.6.0 开始新增）
+            //let details = table.getData('billdata');
+            //master.details = details;//组建完整单据数据并返回数据
+            return master;
+        };
+        //以下用来支持弹窗、选择数据、返回主页面操作
+
+        //提供一个判断对象在对象数组中的索引位置的函数
+        Array.prototype.getObjIndex = function (obj) {
+            let rs = -1;
+            for (let i = 0; i < this.length; i++) {
+                if (this[i]['linenum'] == obj['linenum'])//判断行号是否相同
+                    return i;
+            }
+            return rs;
+        };
+    });
+</script>
+</html>

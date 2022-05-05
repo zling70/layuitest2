@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!--资源引用，第三方的，远程引用，网络断开时不能用-->
+    <!-- 
+    <link rel="stylesheet" href="//unpkg.com/layui@2.6.8/dist/css/layui.css">
+    <script src="//unpkg.com/layui@2.6.8/dist/layui.js"></script> -->
+
+    <link rel="stylesheet" href="./layui-master/dist/css/layui.css">
+    <script src="./layui-master/dist/layui.js"></script>
+
+    <style>
+        .custinfo {
+            margin: 0 auto;
+            width: 520px;
+            height: 420px;
+            border: 1px solid red;
+        }
+
+        .layui-form-label {
+            width: 100px;
+        }
+
+        /*定义表单元素下的input 非表单元素不受影响*/
+        .layui-form-item .layui-input {
+            width: 260px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="custinfo" class="custinfo">
+        <div style="padding: 20px 0 20px 0;font-size: 24px;text-align: center;">客户详情</div>
+        <form class="layui-form" action="" lay-filter="custinfo" style="width: 100%;">
+            <div class="layui-form-item" style="margin: 10px auto;width: 420px;">
+                <div class="layui-inline" style="width: 100%;">
+                    <label class="layui-form-label">次序号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="linenum" name="linenum" required lay-verify="required" placeholder="请输入编号"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>                
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 420px;">
+                <div class="layui-inline" style="width: 100%;">
+                    <label class="layui-form-label">客户编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="customer" name="customer" required lay-verify="required" placeholder="请输入编号"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>                
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 420px;">
+                <div class="layui-inline">
+                    <label class="layui-form-label">客户名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="custname" name="custname" required lay-verify="required" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin: 10px auto;width: 420px;">
+                <div class="layui-inline" style="width: 100%;">
+                    <label class="layui-form-label">客户地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="custaddress" name="custaddress" required lay-verify="required"
+                            placeholder="输入客户地址" autocomplete="off" class="layui-input">                        
+                    </div>
+                </div>          
+            </div>
+        </form>
+        
+    </div>
+</body>
+<script>
+    //最简单的一个表单页面
+    layui.use(['form'], function () {        
+        let form = layui.form;  //用来操作表单，获取表单数据        
+        let $ = layui.jquery    //用来操作jquery对象，获取dom元素
+        const retakeCust = function (...args) {
+            console.log(args);
+        }        
+        
+    });
+    
+</script>
+
+</html>

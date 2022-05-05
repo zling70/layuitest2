@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .subwin {
+            margin: 0 auto;
+            width: 580px;
+            height: 450px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="subwin" class="subwin">
+        <div style="padding: 20px 0 20px 0;font-size: 24px;text-align: center;">选择客户</div>
+
+        <table id="customertable" lay-filter="customertable"></table>
+        <div class="layui-btn-group" style="margin: 0 auto;">
+            <button id="retrieve" title="取值返回数据" type="button" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe654;</i>
+            </button>
+            <button id="customerload" type="button" title="测试操作，数据加载" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe655;</i>
+            </button>
+        </div>
+        <link rel="stylesheet" href="./layui-master/dist/css/layui.css">
+        <script src="./layui-master/dist/layui.js"></script>
+
+        <script>
+            layui.use(['table'], function () {
+                let table = layui.table;//
+                let $ = layui.jquery
+                let tabl = table.render({
+                    elem: '#customertable'
+                    , id: 'customerdata' //必须确保唯一
+                    , height: 300
+                    , width: 480
+                    , page: false
+                    , skin: 'line'
+                    , even: 'true'
+                    , size: 'lg'
+                    , limit: 200
+                    , cols: [[
+                        { type: 'radio', fixed: 'left' }
+                        , { field: 'linenum', title: '栏号', width: 80, sort: true, fixed: 'left' }
+                        , { field: 'custcode', title: '客户编号', width: 150, sort: true }
+                        , { field: 'custname', title: '客户名称', sort: true }
+                        , { field: 'custaddress', title: '客户地址', edit: 'text', width: 80 }
+
+                    ]]
+                    , data: [{ "linenum": 1, "custcode": "c01", "custname": "刘小备", "custaddress": "长沙" }
+                        , { "linenum": 2, "custcode": "c02", "custname": "关小羽", "custaddress": "湘潭" }
+                        , { "linenum": 3, "custcode": "c03", "custname": "张小飞", "custaddress": "株洲" }
+                        , { "linenum": 4, "custcode": "c04", "custname": "赵小云", "custaddress": "衡阳" }
+                        , { "linenum": 5, "custcode": "c05", "custname": "周小瑜", "custaddress": "岳阳" }
+                        , { "linenum": 6, "custcode": "c06", "custname": "孔小明", "custaddress": "邵阳" }
+
+                    ]
+                });
+
+                $("#retrieve").on('click', function () {   //取值返回 
+                    zlingAct() 
+                    let index = parent.layer.getFrameIndex(window.name)//先得到当前iframe层的索引,
+                    parent.layer.close(index)//closeAll('iframe') //再执行简单粗暴关闭
+                    return true
+                })
+                //下面方法需要使用这个窗口的个人提供，谁使用，谁独立书写自己用得着的业务处理方法
+                const zlingAct = function(){
+                    //对于被子窗口，parent总是可以直接使用的               
+                    const cust = parent.document.getElementById("customer") //获取父窗口中的input元素
+                    const custid = parent.document.getElementById("custid") //父窗口中是隐藏input                   
+                    let checkStatus = table.checkStatus('customerdata')
+                    if (!checkStatus.data || checkStatus.data.length < 1) {
+                            layer.msg('请至少选择一行数据')
+                            return
+                        }
+                    custid.value=checkStatus.data[0].custcode
+                    cust.value=checkStatus.data[0].custname //简单给父窗口文本框赋值，此处还应该给隐藏id赋值                   
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
